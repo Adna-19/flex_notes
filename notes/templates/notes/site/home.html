@@ -1,0 +1,58 @@
+{% extends "site_base.html" %}
+{% load static %}
+{% block title %} Home {% endblock %}
+
+{% block intro %}
+  <h1 style="margin-top: 6rem;">
+  Tame your work, <strong>organize your life</strong>
+  </h1>
+  
+  <h2>
+    Remember everything and tackle any project with your notes, tasks, and schedule all in one place.
+  </h2>
+
+  <p class="text-center mt-5"><a style=
+    "
+    width: 300px; height: 50px; line-height: 2.5em;
+    color: white;
+    background: linear-gradient(to right, rgb(40, 179, 235), rgb(78, 183, 224));
+    " 
+    href="{% url 'accounts:signup' %}" class="btn">Sign up for free</a></p>
+
+  <p style="margin-top: -20px;" class="text-center">
+    <a href="{% url 'accounts:login' %}" class="link link-theme link-arrow"><small>Already have an account? Log in</small></a>
+  </p>
+
+{% endblock %}
+
+{% block content %}
+<style>
+  .col-2 p {
+    margin-top: -12px;
+  }
+</style>
+  <h2>Welcome to the <strong style="color:#66b3f3;">Flexnote</strong></h2>
+  <p class="lead">
+    Note-taking is an essential part of the learning process. Studies have shown that effective note-taking encourages students to stay focused, can promote learning internally and externally. Our main aim is to give ease to people, specially students.Users of this app can tailor the applications for their own personal uses and employ it in various life roles (as a student, employee, or at home).
+  </p>
+
+  <div class="row">
+    <div class="col col-md-8">
+      <img style="margin-left: -190px;" src="{% static 'media/utility_images/image.png' %}" alt="" width="800">
+    </div>
+    <div class="col col-2 col-md-4">
+      <h5>WORK ANYWHERE</h5>
+      <p>Keep important info handy—your notes sync automatically to all your devices.</p>
+
+      <h5>REMEMBER EVERYTHING</h5>
+      <p>Make notes more useful by adding text, images, audio, scans, PDFs, and documents.</p>
+
+      <h5>TURN TO-DO INTO DONE</h5>
+      <p>Bring your notes, tasks, and schedules together to get things done more easily.</p>
+
+      <h5>FIND THINGS FAST</h5>
+      <p>Get what you need, when you need it with powerful, flexible search capabilities.</p>
+
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% load i18n %}
+{% load socialaccount %}
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/login.css'  %}">
+
+  <div class="row mx-auto p-3" style="width: 80%; margin-top: 40px;">
+    <div class="col col-md-5 design-side p-3">
+      <h4 class="mt-5">WELCOME TO THE</h4>
+      <h4 style="font-size: 35px;" class="mt-4"><i style="font-size: 38px;" class="fas fa-book-reader"></i>&emsp14;Flexnote
+      </h4>
+      <p class="lead mt-5"> The easiest way to built and manage your online form.</p>
+    </div>
+    <div class="col col-md-7 form-side">
+      <p class="para mt-5">LOGIN TO YOUR ACCOUNT</p>
+      <br>
+        {% for error in form.non_field_errors %}
+        <div class="text-danger w-75 mx-auto mb-3">
+          {{ error }}
+        </div>
+        {% endfor %}
+
+      {% get_providers as socialaccount_providers %}
+        {% if socialaccount_providers %}
+        <div class="socialaccount_ballot w-75 mx-auto text-center">
+          <ul class="socialaccount_providers">
+            {% include "account/provider_list.html" with process="login" %}
+            </ul>
+          </div>
+          
+        <p class="text-center" style="color: #87ceeb;"> OR </p>
+
+      <form method="POST" action="">
+        {% csrf_token %}
+        {% for field in form %}
+         <div>
+           {% if field.id_for_label == 'id_password' %}
+           <div class="input-group w-75 mx-auto mb-3">
+             {{ field }}
+             <div class="input-group-text">
+               <label id="show_button">
+                 <input class="form-check-input mt-0" type="checkbox" id="show_pass" value=""
+                  aria-label="Checkbox for following text input">
+                 <i id="password-icon-container" class="fas fa-eye text-secondary password-icon"></i>
+                 </label>
+               </div>
+             </div>
+           {% else %}
+           <div class="input-group mx-auto w-75">
+             {{ field }}
+             {% endif %}
+             </div><br>
+           {% endfor %}
+           <a  href="{% url 'accounts:password_reset' %}" class="float-end me-5" style="margin-top: -50px; text-decoration: none;"><small>Forgot Password?</small></a>
+           <br>
+           <div class="row" style="width: 100%; margin-top: -25px;">
+             <div class="col col-md-5 text-end me-3">
+              <input type="submit" value="Login" class="btn">
+             </div>
+             <div class="col col-md-6">
+              <small style="color: gray;">Don't have an acccount? <a href="{% url 'accounts:signup' %}" style="text-decoration: none; color: #10adeb;">SignUp</a></small>
+             </div>
+           </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+
+    document.querySelector("#show_pass").addEventListener('click', togglePassword);
+    const password_field = document.querySelector("#id_password");
+    const icon_container = document.querySelector("#password-icon-container");
+
+    function togglePassword(event) {
+      if(event.target.checked) {
+        password_field.type = "text";
+        icon_container.className = "fas fa-eye-slash text-secondary";  
+      }
+      else {
+        password_field.type = "password"
+        icon_container.className = "fas fa-eye text-secondary";
+      }
+    }
+  </script>
+{% endblock %} 

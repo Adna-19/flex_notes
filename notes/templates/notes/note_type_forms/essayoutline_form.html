@@ -1,0 +1,113 @@
+
+<style type="text/css">
+  label {
+    font-weight: bold;
+    font-size: 22px;
+  }
+
+  #id_introduction,
+  #id_conclusion {
+    height: 170px;
+  }
+
+  #id_body {
+    height: auto;
+  }
+
+  #id_introduction:focus,
+  #id_body:focus,
+  #id_conclusion:focus {
+    outline: none !important;
+    outline-width: 0 !important;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+    input[type="submit"] {
+    position: absolute;
+    top: 32px;
+    right: 30px;
+    background-color: #37afdf;
+    color: white;
+  }
+</style>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div>
+    {{ form.media }}
+    {% for field in form %}
+    <label for="{{ field.id_for_label }}">{{ field.label }} : </label>
+    {{ field }}
+    {% endfor %}
+  </div>
+  <p>
+    <input type="submit" id="submit" class="btn btn-sm btn-success" value="Save">
+  </p>
+</form>
+
+<script type="text/javascript">
+  document.querySelectorAll('textarea').forEach(input => {
+    input.className = "form-control mb-3";
+  });
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+      CKEDITOR.on('instanceReady', function (e) {
+        const current_object = "{{ current_object }}"
+        const editor = e.editor;
+
+        console.log(editor.name);
+
+        if(current_object == "None") {
+          switch(editor.name) {
+            case 'id_introduction':
+              editor.insertHtml(`
+                <ol>
+                  <li>Sentence to get the attention of your readers:</li>
+                  <li>One-sentence thesis statement:</li>
+                </ol>
+              `);
+              break;
+            
+            case 'id_body':
+              editor.insertHtml(`
+              <ol>
+                <li>First Main Idea</li>
+                <ul>
+                  <li>Supporting evidence #1</li>
+                  <li>Supporting evidence #2</li>
+                  <li>Supporting evidence #3</li>
+                </ul>
+                <br>
+                <li>Second Main Idea</li>
+                <ul>
+                  <li>Supporting evidence #1</li>
+                  <li>Supporting evidence #2</li>
+                  <li>Supporting evidence #3</li>
+                </ul>
+                <br>
+                <li>Third Main Idea</li>
+                <ul>
+                  <li>Supporting evidence #1</li>
+                  <li>Supporting evidence #2</li>
+                  <li>Supporting evidence #3</li>
+                </ul>
+              </ol>
+              `);
+              break;
+            
+            case 'id_conclusion':
+              editor.insertHtml(`
+              <ol>
+                <li>Restate of your thesis</li>
+                <br>
+                <li>Insightful sentence to end your essay</li>
+              </ol>
+              `);
+              break;
+          }
+        }
+      });
+    });
+</script>

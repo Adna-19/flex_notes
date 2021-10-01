@@ -1,0 +1,120 @@
+{% extends "notes_base.html" %}
+
+{% block title %} Notes List {% endblock %}
+
+{% block noteslist %}
+<style type="text/css">
+  @import 'https://fonts.googleapis.com/css?family=Montserrat';
+  * {
+    font-family: Montserrat;
+  }
+
+  .col-1, .col-2{
+    position: fixed;
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+}
+  
+  .line{
+    border-right: 1px solid rgb(182, 181, 181);
+  }
+ 
+  .contents {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .notes-content{
+    overflow-y: scroll;
+    height: 100vh;
+  }
+
+  .contents { 
+    height: 100vh;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 50px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+
+.note {
+  -moz-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  -webkit-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+  .notes-content a {
+    text-decoration: none;
+    color: #787878;
+  }
+</style>
+
+<div style="font-size: 15px;" class="line">
+  <h4 style="font-size: 20px;" class="mt-4 ms-2">
+    <i class="fas fa-file-alt"></i>&emsp14;Notes
+  </h4>
+  <small class="ms-2 text-secondary">
+    {% if notebook %} {{ notebook.name }} {% else %} All notes {% endif %}
+  </small>
+  <hr>
+  
+  <ul class="list-group notes-content mt-2">
+    {% for note in notes %}
+    <li class="list-group-item note mb-3 {% if note == current_note %}border border-primary {% endif %}"
+      id="note-{{note.id}}">
+      <!-- to be learn -->
+      <a href="
+          {% if notebook %} 
+            {% url 'notes:specific_note_from_sepecific_notebook' note.slug notebook.slug %} 
+          {% else %} 
+            {% url 'notes:specific_note_from_all_notes' note.slug %} 
+          {% endif %}">
+        <i class="{{ note.note_type.icon_class }}"></i>
+        &emsp14;
+        {{ note.note_content_object.title }}
+        <hr>
+        <small>{{ note.date_created.date }}</small>
+        <a href="{% url 'notes:move_to_trash' note.slug %}" class="float-end"><i class="fas fa-trash-alt text-danger"
+            style="font-size:20px;"></i></a>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+</div>
+
+
+
+{% endblock %}
+
+<!-- ACTUAL NOTES EDITING AREA -->
+{% block editor %}
+
+  {% if current_note %}
+  <header>
+    <h4 style="color: rgb(70, 69, 69); font-size: 20px;" class="mt-3">
+      <i style="font-size: 16px;" class="{{ current_note.note_type.icon_class }}"></i>
+      {{ current_note.note_content_object.title }}
+    </h4>
+    <div class="text-end">
+      {% include "notes/share_modal.html" %}
+      <a style="background-color: #55BCE6;" href="/notes/{{ current_note.note_type.slug }}/{{ current_note.note_book.id }}/{{ current_note.note_content_object.id }}/update/#note-{{current_note.id}}"
+        class="btn btn-sm text-white">
+        <i class="far fa-edit"></i> Edit
+      </a>
+      {% if current_note.note_type.slug != 'todo-note' %}
+      <a style="background-color: #43bff0;" href="{% url 'notes:export_to_pdf' current_note.slug %}" class="btn btn-sm text-white me-2">
+        <i class="far fa-file-pdf"></i> pdf
+      </a>
+      {% endif %}
+    </div>
+  </header>
+    <hr>
+    {% include current_note_template_name %}
+  {% else %}
+    <p class="lead text-secondary text-center" style="margin-top: 50px; font-size: 25px;">There are no notes in the notebook. <br> Create new note.</p>
+  {% endif %}
+
+{% endblock %}

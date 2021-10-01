@@ -1,0 +1,81 @@
+<style type="text/css">
+  td input {
+    width: 170px;
+    height: 35px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding-left: 5px;
+  }
+
+  td input[type="checkbox"] {
+    display: none;
+  }
+    input[type="submit"] {
+    position: absolute;
+    top: 32px;
+    right: 30px;
+    background-color: #37afdf;
+    color: white;
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div>
+    {{ form.media }}
+    {{ form.as_p }}
+    {{ formset.management_form }}
+    <table class="table w-50">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Breakfast</th>
+          <th>Lunch</th>
+          <th>Dinner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for form in formset %}
+        <tr>
+          <th class="day-name"></th>
+          {% for field in form %}
+          <td>{{ field }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p><input type="submit" id="submit" class="btn btn-sm btn-success mt-3" value="Save"></p>
+</form>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script type="text/javascript">
+
+  $(function () {
+    $("#id_week").datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+  });
+
+  const trs = document.querySelectorAll('tr');
+  const days = [
+    'Sunday', 'Monday', 'Tuesday',
+    'Wednesday', 'Thursday', 'Friday',
+    'Saturday'
+  ]
+  const days_headers = document.querySelectorAll('.day-name');
+
+  // show days in side-headers
+  for (var i = 0; i < days_headers.length; i++) {
+    days_headers[i].textContent = days[i];
+  }
+  // remove extra formsets
+  for (var i = 8; i < trs.length; i++) {
+    trs[i].remove();
+  }
+</script>

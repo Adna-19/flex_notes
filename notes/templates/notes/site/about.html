@@ -1,0 +1,108 @@
+{% extends "site_base.html" %}
+{% load static %}
+
+{% block title %} About Us {% endblock %}
+
+
+{% block intro %}
+<style>
+  .row1{
+    background: #24b4ec;
+    color: white;
+    margin-left: -155px;
+    margin-right: -155px;
+  }
+</style>
+  <div style="height: 550px; margin-top: -57px;" class="row row1">
+    <div style="padding: 60px; margin-left: 50px;" class="col col-md-6">
+        <strong>About Flexnote</strong>
+        <h1 class="text-white">An extension of your brain</h1>
+        <p style="line-height: 2em;" class="lead">When Stepan Pachikov, our founder, began working on the idea that eventually became Evernote, he recognized three things
+        the human brain does: it remembers the past, builds connections, and creates new ideas for the future.</p>
+    </div>
+    <div class="col">
+      <img src="{% static 'media/login_page.png' %}" alt="" height="560px">
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block content %}
+<style>
+  h3{
+    color: #34b5e9;
+  }
+</style>
+<div style="margin-top: 130px;" class="div"></div>
+
+  <div class="row">
+    <div class="col col-md-6">
+      <h3>Remember everything</h3>
+      <p style="line-height: 2em;" class="lead">Flexnote was founded to address a growing problem that technology helped to create: how to succeed in a world where the volume and velocity of information are constantly increasing.</p>
+    </div>
+    <div class="col col-md-6 text-end">
+      <img src="{% static 'media/utility_images/remember2.jpg' %}" alt="" width="400px" height="320px">
+    </div>
+  </div>
+
+  <div style="margin-top: 130px;" class="div"></div>
+  
+  <div class="row">
+    <div class="col col-md-6">
+      <img src="{% static 'media/utility_images/accomplish2.jpg' %}" alt="" width="300px" height="300px">
+    </div>
+
+    <div class="col col-md-6 text-end">
+      <h3 class="text-start">Accomplish anything</h3>
+      <p style="line-height: 2em;" class="lead">People today are overwhelmed with information, and anxious about how to handle it all. Flexnote helps people find focus now, in the moment, to make progress on what matters most.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 130px;" class="div"></div>
+  
+  <div class="row">
+    <div class="col col-md-6">
+      <h3>Become ever better</h3>
+      <p style="line-height: 2em;" class="lead">Flexnote launched the digital personal productivity movement, and has been growing ever since. More than 225 million people around the world have discovered Flexnote, which is used in over 25 languages every day.</p>
+      </div>
+
+      <div class="col col-md-6 text-end">
+        <img src="{% static 'media/utility_images/user2.png' %}" alt="" width="420px" height="300px">
+      </div>
+  </div>
+
+  <div style="margin-top: 130px;" class="div"></div>
+  
+  <div class="row">
+    <div class="col col-md-6">
+      <img style="margin-top: -20px;" src="{% static 'media/utility_images/user.png' %}" alt="" width="420px" height="400px">
+    </div>
+  
+    <div class="col col-md-6 text-end">
+      <h3 class="text-start">Many backgrounds, one Flexnote.</h3>
+      <p style="line-height: 2em;" class="lead">We believe that different perspectives lead to better ideas. We’re continually working to create a more trusting and collaborative environment within Evernote—one where all employees can be their authentic selves.</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 160px;" class="div"></div>
+
+
+  <div style="height: 390px; padding-top: 80px;" class="row1">
+    <h2 class="text-white text-center mt-5">Ready for Flexnote?</h2>
+    <p class="text-center">
+      <a class="btn" href="{% url 'accounts:signup' %}" style="
+          width: 230px;
+          height: 50px;
+          background-color: F7F7F7;
+          color: #24b4ec;
+          text-align: center;
+          line-height: 2.2em;
+          font-weight: bold;
+          ">
+        <strong>GET STARTED FOR FREE</strong>
+      </a>
+    </p>
+   
+  </div>
+
+{% endblock %}

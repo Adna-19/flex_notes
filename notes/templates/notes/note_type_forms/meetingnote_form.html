@@ -1,0 +1,83 @@
+<style type="text/css">
+  label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #787878;
+  }
+    input[type="submit"] {
+    position: absolute;
+    top: 32px;
+    right: 30px;
+    background-color: #37afdf;
+    color: white;
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div>
+    {{ form.media }}
+    {% for field in form %}
+    <div class="mb-3">
+      <label for="{{ field.id_for_label }}">{{ field.label }} : </label>
+      {{ field }}
+    </div>
+    {% endfor %}
+  </div>
+  <p>
+    <input type="submit" id="submit" class="btn btn-sm btn-success mt-3" value="Save">
+  </p>
+</form>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<script type="text/javascript">
+  $(function () {
+    $("#id_date_time").datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+  });
+
+  document.querySelector('#id_goal').className = 'form-control';
+  document.querySelector('#id_date_time').className = 'form-control';
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+      CKEDITOR.on('instanceReady', function (e) {
+        const current_object = "{{ current_object }}"
+        const editor = e.editor;
+
+        if(current_object == 'None'){
+          if (editor.name == 'id_attendees') {
+            editor.insertHtml(`
+            <ul>
+              <li>Meeting attendee 1</li>
+              <li>Meeting attendee 2</li>
+              <li>Meeting attendee 3</li>
+              <li>Meeting attendee 4</li>
+            </ul>
+          `);
+
+          } else if (editor.name == 'id_agenda') {
+            editor.insertHtml(`
+            <ul>
+              <li>This is agenda 1</li>
+              <li>This is agenda 2</li>
+              <li>This is agenda 3</li>
+              <li>This is agenda 4</li>
+            </ul>
+          `);
+          }
+
+        }
+       
+        // console.log(editor)
+      });
+    });
+
+
+</script>

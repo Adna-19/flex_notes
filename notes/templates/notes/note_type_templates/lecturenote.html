@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ current_note.note_content_object.title }}</title>
+</head>
+
+<body style="font-size: 17px; padding-right: 15px;">
+
+<div class="contents">
+  <strong>Course: </strong>{{ current_note.note_content_object.course }}
+  <br>
+  <strong>Date: </strong><small>{{ current_note.note_content_object.date.date }}</small>
+  <br>
+  <strong>Professor: </strong> {{ current_note.note_content_object.professor }}
+  <hr>
+  <div class="note-body">
+    {{ current_note.note_content_object.text_content|safe }}
+  </div>
+  <br><br>
+  <h4>Summary</h4>
+  {{ current_note.note_content_object.summary }}
+</div>
+</body>
+</html>
+

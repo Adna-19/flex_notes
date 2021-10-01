@@ -1,0 +1,152 @@
+{% extends "notes_base.html" %}
+{% load static %}
+
+{% block title %} NoteBooks {% endblock %}
+
+{% block noteslist %}
+<style>
+  .col-2 {
+  width: 80%;
+}
+.col-3 { display: none; }
+
+#notebook-header{
+  border: none;
+}
+
+</style>
+<link rel="stylesheet" href="{% static 'css/notebook_table.css' %}">
+  <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+
+  <div class="card mt-3" id="notebook-header">
+    <div class="card-body p-3">
+      <div style="float: left;width: 80%;">
+        <h4 class="p-2">Notebooks</h4>
+        <small>
+          <p class="mt-3 ms-2">{{notebooks.count}} notebooks</p>
+        </small>
+      </div>
+      <div style="float: right; margin-top: 60px;">
+        <button style="
+          background: none;
+          border: none;
+          text-decoration: none;
+          color: #38b2e2;
+          " 
+          id="create-notebook">
+          <i style="font-size: 13px;" class="fas fa-plus"></i>
+          New Notebook</button>
+      </div>
+  </div>
+</div>
+<hr style="margin-top: -22px; border-bottom: 2px solid #3f4647">
+
+<table class="fold-table">
+  <thead style="background-color: rgb(245, 245, 245);">
+    <tr>
+      <th></th>
+      <th>TITLE</th>
+      <th>CREATED BY</th>
+      <th>UPDATED</th>
+      <th>ACTIONS</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for notebook in notebooks %}
+    
+    <!-- INCLUDING NOTEBOOK DELETE MODAL -->
+    {% include "notes/notebook_delete_modal.html" %}
+
+    <tr>
+      <td class="view">
+        <button style="border: none; background: none;">
+          <i class="fas fa-sort-down" style="pointer-events: none; color: #777777;"></i>
+        </button>
+      </td>
+      <td>
+        <a href="{% url 'notes:first_note_from_specific_notebook' notebook.slug %}" style="text-decoration: none; color: #5e5d5d; font-size: 14px;">
+          <i class="fas fa-book"></i> &emsp14;
+          {{ notebook.name }} ({{ notebook.notes.count}})
+        </a>
+      </td>
+      <td style="font-size: 14px;">
+        {{ notebook.user.fullname }}
+      </td>
+      <td style="font-size: 13px;">
+        {{ notebook.date_updated|timesince }} ago
+      </td>
+      <td>
+        <div class="dropdown">
+          <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          <i style="color: #838282;" class="fas fa-ellipsis-h"></i>
+          </button>
+          <ul class="dropdown-menu w-25" aria-labelledby="dropdownMenuButton1">
+            <li>
+              <button class="btn btn-sm edit-btns" id="notebook-edit-btn{{ notebook.id }}"
+                data-notebook_slug="{{ notebook.slug }}">
+                Update
+              </button>
+            </li>
+            <li>
+              <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                delete
+              </button>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr class="fold">
+      <td colspan="5">
+        <div class="fold-content">
+          <ul class="list-group">
+            {% for note in notebook.notes.all %}
+            <li class="list-group-item">
+              <div class="row" style="height: 35px;">
+                <div class="col col-md-1">
+                  <i style="font-size: 16px; color: gray;" class="{{ note.note_type.icon_class }}"></i>
+                </div>
+                <div style="font-size: 15px;" class="col col-md-4">{{ note.note_content_object.title }}</div>
+                <div class="col col-md-1">
+                  <!-- EMPTY COLUMN FOR SOME GAP -->
+                </div>
+                <div class="col col-md-5"><small>Updated {{ note.date_created|timesince }} ago</small> </div>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+  <script>
+    $(function () {
+      $(".fold-table tr td.view").on("click", function () {
+        $(this).toggleClass("open").parent('tr').next(".fold").toggleClass("open");
+      });
+    });
+
+    $(document).ready(function () {
+      $("#create-notebook").modalForm({
+        formURL: "{% url 'notes:create_notebook' %}"
+      });
+
+      document.querySelectorAll('.edit-btns').forEach(button => {
+        const btn_dom_id = button.id;
+        $(`#${btn_dom_id}`).modalForm({
+          formURL: `/notes/notebook/${button.dataset.notebook_slug}/update/`
+        });
+      });
+
+    });
+  </script>
+{% endblock %}

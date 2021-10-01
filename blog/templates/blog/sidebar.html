@@ -1,0 +1,29 @@
+
+<style>
+  .head{
+    background-color: #55c3ee;
+    color: white;
+    height: 50px;
+    text-align: center;
+    line-height: 1.7em;
+    margin-top: 60px
+  }
+</style>
+
+<h3 class="head">Categories</h3>
+<ul style="margin-top: -18px;" class="list-group text-center">
+  {% for category in categories %}
+  <li class="list-group-item">
+    <a href="{% url 'blog:posts_list_by_category' category.slug %}">{{category.title}}</a>
+  </li>
+  {% endfor %}
+</ul>
+
+<h3 class="head">Tags</h3>
+<div class="card" style="margin-top: -19px;">
+  <div class="card-body text-center"> 
+    {% for tag in tags %}
+    <span class="badge bg-info">{{ tag.name }}</span>
+    {% endfor %}
+  </div>
+</div>

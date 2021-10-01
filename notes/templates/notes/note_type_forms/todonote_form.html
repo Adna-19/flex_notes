@@ -1,0 +1,47 @@
+<style type="text/css">
+  label.field-labels {
+    font-size: 20px;
+    font-weight: bold;
+    color: #787878;
+  }
+</style>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div class="w-100">
+    <label class="field-labels" for="{{ field.id_for_label }}">{{ form.title.label }} : </label>
+    <div class="row" style="height: 100px; width: 170%">
+      <div class="col" style="width: 90%;">
+        {{ form.title }}
+      </div>
+      <div class="col" style="width: 10%;">
+        <input style="background-color: #2eaee0;" type="submit" class="btn  mt-2 text-white" value="Save List">
+      </div>
+    </div>
+  </div>
+</form>
+
+<div>
+  <h5 class="text-secondary">Tasks in the list: </h5>
+  {% with current_object.items.all as todo_items %}
+  <ul class="list-group">
+    {% for todo_item in todo_items %}
+    <li class="list-group-item">
+      <label class="w-100">
+        {{ todo_item.item }}
+        <span class="badge bg-{% if todo_item.completed %}success{% else %}danger{% endif %} float-end">
+          {% if todo_item.completed %}
+          completed
+          {% else %}
+          pending
+          {% endif %}
+        </span>
+      </label>
+    </li>
+    {% empty %}
+    <li class="list-group-item text-center pt-3" style="height: 130px; font-size: 22px; color: #ccc;">No Items, Add
+      tasks to list...</li>
+    {% endfor %}
+  </ul>
+  {% endwith %}
+</div>

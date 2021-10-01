@@ -1,0 +1,14 @@
+
+<div class="contents">
+    <h4 style="font-size: 21px;">Summary:</h4>
+    <p style="font-size: 15px;">{{ current_note.note_content_object.summary }}</p>
+    <br>
+    <h4 style="font-size: 21px;">Milestones: </h4>
+    <p style="font-size: 15px;">{{ current_note.note_content_object.major_milestones|safe }}</p>
+    <br>
+</div>
+
+<script>
+  document.querySelector('thead').className = 'table-active text-secondary'
+
+</script>

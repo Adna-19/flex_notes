@@ -1,0 +1,60 @@
+{% extends "notes_base.html" %}
+
+{% block title %} Trash {% endblock %}
+
+{% block noteslist %}
+  <style type="text/css">
+    @import 'https://fonts.googleapis.com/css?family=Montserrat';
+    * {
+      font-family: Montserrat;
+    }
+
+.line{
+  border-right: 1px solid rgb(182, 181, 181);
+}  
+.notes-content{
+  overflow-y: scroll;
+  height: 100vh;
+}
+  
+.note {
+  -moz-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  -webkit-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+  </style>
+  <!--????  -->
+<div style="font-size: 15px;" class="line">
+
+  <h4 style="font-size: 20px;" class="mt-4 ms-2">
+    <i class="fas fa-trash"></i>&emsp14;&emsp14;Trash
+  </h4>
+  {% if trashed_notes %}
+  <a href="{% url 'notes:empty_trash' %}" class="btn btn-sm btn-outline-danger mt-2 ms-2">Empty</a>
+  {% endif %}
+  <hr>
+  
+  <ul class="list-group notes-content mt-3">
+    {% for note in trashed_notes %}
+    <li class="list-group-item note mb-3">
+      <a href="#" style="text-decoration: none; color: #787878;">
+        <i class="{{ note.note_type.icon_class }}"></i>
+        &emsp14;
+        {{ note.note_content_object.title }}
+        <hr>
+        <small>{{ note.date_created.date }}</small>
+        <a href="{% url 'notes:restore_from_trash' note.slug %}" class="float-end"><i
+            class="fas fa-trash-restore text-success" style="font-size:20px;"></i></a>
+      </a>
+    </li>
+    {% empty %}
+    <p class="lead text-center text-secondary mt-5">Trash is empty..</p>
+    {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}
+
+{% block editor %}
+  <!-- EMPTY FOR NOW -->
+{% endblock %}

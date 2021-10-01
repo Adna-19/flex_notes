@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+  
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css" integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
+  <title>
+    {% block title %}
+    {% endblock %}
+  </title>
+
+<style>
+@import 'https://fonts.googleapis.com/css?family=Montserrat';
+  * {
+    font-family: Montserrat;
+  }
+
+::-webkit-scrollbar {
+    background-color:#fff;
+    width:16px;
+}
+
+/* background of the scrollbar except button or resizer */
+::-webkit-scrollbar-track {
+    background-color:#fff;
+}
+::-webkit-scrollbar-track:hover {
+    background-color:#f4f4f4;
+}
+
+/* scrollbar itself */
+::-webkit-scrollbar-thumb {
+    background-color:#babac0;
+    border-radius:16px;
+    border:5px solid #fff;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color:#a0a0a5;
+    border:4px solid #f4f4f4;
+}
+#search-input {
+  color: rgb(189, 185, 185);
+  border: none;
+  background: none;
+}
+
+#search-results{
+  border-radius: 8px;
+}
+
+#search-input::-webkit-input-placeholder { /* Edge */
+  color: #818181;
+}
+
+#search-input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #818181;
+}
+
+#search-input::placeholder {
+  color: #818181;
+}
+
+#search-button {
+  border: none;
+  color: rgb(218, 217, 217);
+  background: none;
+}
+
+#search-component {
+  background: #404040;
+  border-radius: 50px;
+  padding: 2px;
+  width: 235px;
+  height: 38px;
+}
+
+#search-input:focus {
+  outline:none;
+  outline-width: 0;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+
+
+ul.user-options li {
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: none;
+  background: none;
+  line-height: 1.4em;
+}
+ul.user-options li:hover{
+  background-color: #404040;
+}
+
+ul.user-options li.active{
+  background-color: #2e2e2e;
+  border-bottom: none;
+}
+
+ul.user-options li a {
+  font-size: 14px;
+}
+
+.row {
+  width: 100.9%;
+}
+
+.col-1 { 
+  width: 20%; 
+  position: fixed; 
+  padding: 20px;
+  background: #1A1A1A;
+}
+.col-2 { width: 25%; margin-left: 20%;}
+.col-3 { 
+  width: 55%; 
+  /* position: fixed;  */
+  margin-left: 45%;
+}
+
+.col-1, .col-2 {
+  height: 100vh;
+}
+
+a.sideelements {
+  text-decoration: none;
+  color: #a7a4a4;
+}
+
+.sidebar-avatar-upload .sidebar-avatar-preview {
+  width: 65px;
+  height: 65px;
+  margin: auto;
+  position: relative;
+  border-radius: 100%;
+  box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+}
+
+div.result-card { display: none;}
+
+.sidebar-avatar-upload .sidebar-avatar-preview > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="col col-1  p-3">
+      {% block usersidebar %}
+      <span>
+        <a href="{% url 'accounts:update_profile' %}" style="text-decoration: none;">
+          <div class="sidebar-avatar-upload mt-3">
+            <div class="sidebar-avatar-preview" style="border: 2px solid #d4d3d3;">
+              <div style="background-image: url('{{ request.user.profile_img.url }}');">
+              </div>
+            </div>
+            <p style="font-size: 14px; color: #afaeae;" class="mt-2 text-center username">{{ request.user.fullname }}</p>
+          </div>
+        </a>
+      </span>
+  
+  
+      <div class="mb-3">
+        <form action="" method="GET" id="note-search-form">
+          <div class="input-group ms-2" id="search-component">
+            <input type="text" class="form-control" placeholder="Search" id="search-input">
+            <button id="search-button" class="btn btn-sm btn-primary">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+        </form>
+        <div class="card result-card ms-2" style="border-radius: 8px; width: 230px;">
+          <div class="card-body" id="search-results">
+          </div>
+        </div>
+      </div>
+  
+      <ul class="list-group user-options ms-2">
+        <div class="btn-group">
+          <button style="
+              background-color: #55bce6;
+              border-radius: 20px;
+              font-weight: bold;
+              font-size: 14px;
+              " class="btn text-white dropdown-toggle" type="button" id="navbarDropdown" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            New Note
+          </button>
+          <ul class="dropdown-menu" style="width: 230px; border-radius: 10px;" aria-labelledby="navbarDropdown">
+            {% for note_type in all_note_types %}
+            <li>
+              <a class="dropdown-item"
+                href="{% if notebook %} {% url 'notes:notes_create' note_type.slug notebook.id %} {% else %} {% url 'notes:notes_create' note_type.slug notebook_global.id %} {% endif %}">
+                <i class="{{ note_type.icon_class }} text-secondary"></i> &emsp14;
+                {{ note_type.type_name }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+  
+        <br>
+
+        <li class="list-group-item side-option" id="dashboard">
+          <a href="{% url 'notes:dashboard' %}" class="sideelements"><i class="fas fa-home"></i> &emsp14;&emsp14; Home</a>
+        </li>
+        <li class="list-group-item side-option" id="first_note_from_all_notes">
+          <a href="{% url 'notes:first_note_from_all_notes' %}" class="sideelements"><i class="fas fa-clipboard"></i>
+            &emsp14;&emsp14; Notes</a>
+        </li>
+        <li class="list-group-item side-option" id="display_notebooks">
+          <a href="{% url 'notes:display_notebooks' %}" class="sideelements">
+            <i class="fas fa-book"></i> &emsp14;&emsp14; NoteBooks
+          </a>
+        </li>
+        <li class="list-group-item side-option" id="open_diary">
+          <a href="{% url 'notes:open_diary' %}" class="sideelements">
+            <i class="fas fa-book"></i> &emsp14;&emsp14;
+            Diary
+          </a>
+        </li>
+        <li class="list-group-item side-option">
+          <a href="{% url 'notes:first_note_from_shared_notes' %}" class="sideelements"><i class="fas fa-share-square"></i> &emsp14;&emsp14; Shared with Me</a>
+        </li>
+  
+        <li class="list-group-item side-option" id="cms_blog">
+          <a href="{% url 'blog:cms_blog' %}" class="sideelements"><i class="fab fa-blogger-b"></i> &emsp14;&emsp14;
+            Blog</a>
+        </li>
+  
+        <li class="list-group-item side-option" id="trashed_items">
+          <a href="{% url 'notes:trashed_items' %}" class="sideelements"><i class="fas fa-trash"></i> &emsp14;&emsp14;
+            Trash</a>
+        </li>
+
+        <li class="list-group-item side-option">
+          <a href="{% url 'accounts:logout' %}" class="sideelements"><i class="fas fa-sign-out-alt"></i>&emsp14;&emsp14;
+            Logout</a>
+        </li>
+      </ul>
+      {% endblock %}
+    </div>
+    <div class="col col-2">
+      {% block noteslist %}
+      {% endblock %}
+    </div>
+    <div class="col col-3">
+      {% block editor %}
+      {% endblock %}
+    </div>
+  </div>
+
+  {% block javascript %}
+  {% endblock %}
+  <script>
+    document.querySelector('#{{url_name}}').classList.add('active');
+    document.querySelector('#search-input').addEventListener('keyup', searchNote);
+
+    function searchNote(event) {
+      const query = event.target.value;
+      const url = `/notes/search/note/?query=${query}`;
+      const requesting_method = 'GET';
+      const results_box = document.querySelector('#search-results');
+
+      var xhttp = new XMLHttpRequest(); // prepare ajax request
+
+      // success response block
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          const response = JSON.parse(this.responseText);
+          results_box.innerHTML = "";
+          document.querySelector('.result-card').style.display = 'block';
+          if(Array.isArray(response.search_results)) {
+            // console.log('Got an array')
+            response.search_results.forEach(result => {
+              results_box.innerHTML += `
+              <a
+               href="/notes/list/${result.note_slug}/${result.notebook_slug}/">
+               ${result.title}
+              </a>
+              <br>
+              `;
+            })
+          } 
+          else {
+            if(query.length > 0){
+              results_box.innerHTML = `<b>${response.search_results}</b>`
+            } 
+            else {
+              document.querySelector('.result-card').style.display = 'none';
+            }
+          }
+        }
+      };
+
+      // sending ajax request
+      xhttp.open(requesting_method, url, true);
+      xhttp.send();
+    }
+
+  </script>
+</body>
+</html>
+

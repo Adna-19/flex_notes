@@ -1,0 +1,88 @@
+<style type="text/css">
+  table {
+    width: 690px;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  th,
+  td {
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  th {
+    text-align: left;
+  }
+
+  thead th {
+    background-color: #9faad4;
+  }
+
+  tbody {
+    background: linear-gradient(45deg, #54e2b8, #6A9FD4);
+    font-family: sans-serif;
+    font-weight: 100;
+  }
+
+  tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  tbody td {
+    position: relative;
+  }
+
+  tbody td:hover:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -9999px;
+    bottom: -9999px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+  }
+</style>
+
+<div class="contents">
+  {% with current_note.note_content_object as weekly_mealplanner %}
+  <table class="mt-5">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Breakfast</th>
+        <th>Lunch</th>
+        <th>Dinner</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for day in weekly_mealplanner.days_instances.all %}
+      <tr>
+        <th class="day-name"></th>
+        <td>{{ day.breakfast }}</td>
+        <td>{{ day.lunch }}</td>
+        <td>{{ day.dinner }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endwith %}
+
+</div>
+
+<script type="text/javascript">
+  const days = [
+    'Sunday', 'Monday', 'Tuesday',
+    'Wednesday', 'Thursday', 'Friday',
+    'Saturday'
+  ]
+
+  const days_headers = document.querySelectorAll('.day-name');
+  // show days in side-headers
+  for (var i = 0; i < days_headers.length; i++) {
+    days_headers[i].textContent = days[i];
+  }
+</script>

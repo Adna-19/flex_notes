@@ -1,0 +1,86 @@
+{% load static %}
+<html>
+
+<body class="page-top">
+  <head>
+    <title>
+      {% block title %}
+      {% endblock %}
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.1/css/all.css"
+    integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/site_layout.css' %}">
+  </head>
+  <header class="header">
+    <a class="logo ms-5" href="#"><i style="font-size: 38px;" class="fas fa-book-reader"></i>&emsp14;Flexnote</a>
+    <input class="menu-btn" type="checkbox" id="menu-btn" />
+    <label class="menu-icon" for="menu-btn"><span class="navicon"></span></label>
+    <ul class="menu me-5">
+      <li><a href="{% url 'notes:site_home' %}" class="link link-theme link-arrow">HOME</a></li>
+      <li><a href="{% url 'notes:site_features' %}" class="link link-theme link-arrow">FEATURES</a></li>
+      <li><a href="{% url 'blog:posts_list' %}" class="link link-theme link-arrow">BLOG</a></li>
+      <li><a href="{% url 'notes:site_about' %}" class="link link-theme link-arrow">ABOUT</a></li>
+      {% if request.user.is_authenticated %}
+        <li><a href="{% url 'accounts:logout' %}" class="link link-theme link-arrow">LOGOUT</a></li>
+      {% else %}
+        <li><a href="{% url 'accounts:login' %}" class="link link-theme link-arrow">LOGIN</a></li>
+      {% endif %}
+      
+    </ul>
+  </header>
+
+  <div>
+
+    <div id="main" class="main">
+
+      <section class="intro">
+
+        <article class="container">
+          {% block intro %}
+          {% endblock %}
+        </article>
+      </section>
+      <!-- /intro -->
+
+      <section class="work">
+        <article class="container" id="one">
+          {% block content %}
+          {% endblock %}
+        </article>
+      </section>
+      <!-- /work -->
+
+      <footer class="footer">
+
+        <div class="container">
+          <hr>
+          <article class="foot-content-left">
+            <ul>&copy;2021 by Namrah Raheem</ul>
+          </article>
+
+          <article class="foot-content">
+            <ul>
+              <li><a href="pixelstrecher@gmail.com">nimra.rahim99@gmail.com</a></li>
+              <li class="social"><a href="https://www.facebook.com/">Facebook</a></li>
+              <li class="social"><a href="https://twitter.com/">Twitter</a></li>
+              <li class="social"><a href="https://www.linkedin.com/company/">LinkedIn</a></li>
+            </ul>
+          </article>
+
+        </div>
+
+      </footer>
+      <!-- /footer -->
+
+
+    </div>
+
+
+  </div>
+  <!-- end div container -->
+</body>
+
+</html>

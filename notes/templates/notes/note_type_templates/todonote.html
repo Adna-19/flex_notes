@@ -1,0 +1,169 @@
+<style>
+  #new-item{
+    outline-style: none;
+    box-shadow: none;
+  }
+.items{
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+</style>
+
+<form action="." method="POST" id="todoform" class="mt-5">
+  {% csrf_token %}
+  <div class="input-group mt-4">
+    <input type="text" class="form-control" placeholder="Add new task" id="new-item"> 
+    <input type="submit" value="Add task" class="btn text-white" style="background-color: #65c6ec;">
+  </div>
+</form>
+<h3 class="mt-5">Task List</h3>
+<div class="mb-3 text-end">
+  <button 
+    class="btn btn-danger btn-sm" 
+    id="del-completed"
+    data-todo_id="{{ current_note.note_content_object.id }}"
+    >
+    Delete Completed
+  </button>
+  <button 
+    class="btn btn-danger btn-sm" 
+    id="del-all"
+    data-todo_id="{{ current_note.note_content_object.id }}"
+  >
+    Delete All
+  </button>
+</div>
+<ul class="list-group" id="task-list">
+  {% with current_note.note_content_object as todo_list %}
+    {% for todo in todo_list.items.all %}
+      <li class="list-group-item mb-2 items {% if todo.completed %}completed{% endif %}" data-item_id="{{todo.id}}"  style="cursor: pointer;">
+        <span 
+          id="item-{{todo.id}}"
+          style="pointer-events:none; 
+          {% if todo.completed %}text-decoration: line-through;{% endif %}"
+        >
+          {{ todo.item }}
+        </span>
+        <span style="pointer-events:none;" class="float-end text-{% if todo.completed %}success{% else %}danger{% endif %}" id="complete-status-{{ todo.id }}">
+          {% if todo.completed %}
+            Completed
+          {% else %}
+            Pending 
+          {% endif %}
+        </span>
+      </li>
+    {% empty %}  
+      <li class="list-group-item text-center" id="empty-message" style="height: 70px; font-size: 22px;">
+        <p class="lead">No items in the list</p>
+      </li>
+    {% endfor %}
+  {% endwith %}
+</ul>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.js'></script>
+<script>
+  document.querySelector("#todoform").addEventListener('submit', addItemToList);
+  document.querySelectorAll(".items").forEach(item => {
+    item.addEventListener('click', markAsCompleted);
+  });
+  document.querySelector("#del-completed").addEventListener('click', deleteCompleted);
+  document.querySelector("#del-all").addEventListener('click', deleteAll);
+
+  function addItemToList(event) {
+    event.preventDefault();
+
+    try {
+      document.querySelector('#empty-message').remove();
+    } catch {
+      console.log('')
+    }
+
+    let item = document.querySelector('#new-item').value;
+    let url = `/notes/todos/{{ current_note.note_content_object.id }}/additem/`;
+
+    let data = new FormData();
+
+    data.append('item', item);
+    data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    axios.post(url, data)
+    .then(response => {
+      const response_data = response['data'];
+      const new_li = document.createElement('li');
+      new_li.style.cursor = 'pointer';
+      new_li.className = 'list-group-item mb-2 items';
+      new_li.setAttribute('data-item_id', response_data.id);
+      new_li.innerHTML = `
+        <span
+          id="item-${response_data.id}"
+          style="pointer-events:none;"
+        >
+          ${response_data.item}
+        </span>
+
+        <span
+          class="float-end text-danger" 
+          id="complete-status-${response_data.id}"
+          style="pointer-events:none;"
+        >
+          Pending
+        </span>
+      `;
+
+      document.querySelector('#task-list').appendChild(new_li);
+      new_li.addEventListener('click', markAsCompleted);
+      document.querySelector('#new-item').value = '';
+    })
+    .catch(error => {
+      console.log(error);
+    })
+
+  }
+
+  function markAsCompleted(event){
+    console.log('MARKED  COMPLETED')
+    const id = event.target.dataset.item_id;
+    const url = `/notes/todos/items/${id}/complete/`;
+
+    axios.get(url)
+    .then(response => {
+      document.querySelector(`#item-${id}`).style.textDecoration = 'line-through';
+      document.querySelector(`#complete-status-${id}`).className = 'float-end text-success';
+      event.target.classList.add('completed');
+      document.querySelector(`#complete-status-${id}`).textContent = 'Completed';
+    })
+    .catch(error => {
+      console.error(error);
+    })
+  }
+
+  function deleteCompleted(event){
+    const id = event.target.dataset.todo_id;
+    const url = `/notes/todos/${id}/delete/completed/`;
+
+    axios.get(url)
+    .then(response => {
+      const completed_items = document.querySelectorAll('.completed');
+      completed_items.forEach(item => { item.remove()});
+    })
+    .catch(error => {
+      console.error(error);
+    })
+
+  }
+
+  function deleteAll(event){
+    const id = event.target.dataset.todo_id;
+    const url = `/notes/todos/${id}/delete/all/`;
+
+    axios.get(url)
+    .then(response => {
+      const completed_items = document.querySelectorAll('.items');
+      completed_items.forEach(item => { item.remove() });
+    })
+    .catch(error => {
+      console.error(error);
+    })
+  }
+
+
+</script>

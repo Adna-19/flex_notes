@@ -1,0 +1,103 @@
+{% extends "notes_base.html" %}
+
+{% block title %} Notes List {% endblock %}
+
+{% block noteslist %}
+<style type="text/css">
+  @import 'https://fonts.googleapis.com/css?family=Montserrat';
+
+  * {
+    font-family: Montserrat;
+  }
+
+  .col-1,
+  .col-2 {
+    position: fixed;
+  }
+
+  .line {
+    border-right: 1px solid rgb(182, 181, 181);
+  }
+
+  .contents {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .notes-content {
+    overflow-y: scroll;
+    height: 100vh;
+  }
+
+  .contents {
+    height: 100vh;
+    padding-top: 20px;
+    padding-left: 30px;
+    padding-bottom: 50px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  }
+
+  .note {
+    -moz-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    -webkit-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  }
+
+  .notes-content a {
+    text-decoration: none;
+    color: #787878;
+  }
+</style>
+
+<div style="font-size: 15px;" class="line">
+  <h4 style="font-size: 20px;" class="mt-4 ms-2">
+    <i class="fas fa-file-alt"></i>&emsp14;Notes
+  </h4>
+  <small class="ms-2 text-secondary">
+    {% if notebook %} {{ notebook.name }} {% else %} All notes {% endif %}
+  </small>
+  <hr>
+
+  <ul class="list-group notes-content mt-3">
+    {% for shared_object in shared_objects %}
+    <li class="list-group-item note mb-3 {% if note == current_note %}border border-primary {% endif %}"
+      id="note-{{shared_object.note.id}}">
+      <a href="{% url 'notes:specific_note_from_shared_notes' shared_object.note.slug %}">
+        <i class="{{ shared_object.note.note_type.icon_class }}"></i> {{ shared_object.note.note_content_object.title }}
+        <hr>
+        <small>{{ shared_object.note.date_created.date }}</small><br>
+        <small>Shared by {{ shared_object.sender.fullname }}</small>
+      </a>
+    </li>
+  
+    {% empty %}
+    <p class="lead mt-4 text-center text-secondary">LIST IS EMPTY</p>
+    {% endfor %}
+  </ul>
+
+</div>
+
+
+
+{% endblock %}
+
+<!-- ACTUAL NOTES EDITING AREA -->
+{% block editor %}
+
+{% if current_note %}
+<h3 class="mt-3">
+  {{ current_note.note_content_object.title }}
+  {% if current_note.note_type.slug != 'todo-note' %}
+  <a style="background-color: #35b7eb;" href="{% url 'notes:export_to_pdf' current_note.slug %}" class="btn btn-sm text-white float-end me-2">
+    <i class="far fa-file-pdf"></i> pdf
+  </a>
+  {% endif %}
+</h3>
+<hr>
+{% include current_note_template %}
+{% else %}
+<p class="lead text-secondary text-center" style="margin-top: 50px; font-size: 25px;">
+  No notes shared with you, Yet.
+</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+
+<style>
+  h4,h3,h5{
+    font-weight: bold;
+  }
+</style>
+
+<div class="contents">
+  <div class="eassay-figure">
+    <p style="font-size: 15px;" class="p-2"><i>Most analytical, interpretive, or persuasive essays tend to follow the same basic pattern. This structure should help you formulate effective outlines for most essays.</i></p>
+  </div>
+  <hr>
+
+  <h5>Introduction </h5>
+  {{ current_note.note_content_object.introduction|safe }}
+  <br>
+  <h5>Body </h5>
+  {{ current_note.note_content_object.body|safe }}
+  <br>
+  <h5>Conclusion </h5>
+  {{ current_note.note_content_object.conclusion|safe }}
+</div>

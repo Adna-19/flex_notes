@@ -1,0 +1,30 @@
+<style type="text/css">
+  label {
+    font-weight: bold;
+    color: #787878;
+    font-size: 22px;
+  }
+  input[type="submit"] {
+    position: absolute;
+    top: 32px;
+    right: 30px;
+    background-color: #37afdf;
+    color: white;
+ }
+</style>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div>
+    {{ form.media }}
+    {% for field in form %}
+    <div class="mb-3">
+      <label for="{{ field.id_for_label }}">{{ field.label }} : </label>
+      {{ field }}
+    </div>
+    {% endfor %}
+  </div>
+  <p>
+    <input type="submit" id="submit" class="btn btn-sm btn-success mt-3" value="Save">
+  </p>
+</form>

@@ -1,0 +1,134 @@
+{% extends "notes_base.html" %}
+{% load static %}
+
+{% block title %} Create Note {% endblock %}
+
+<!-- NOTES PROGRESS -->
+{% block noteslist %}
+<style>
+.line{
+  border-right: 1px solid rgb(182, 181, 181);
+}
+
+.col-2 {
+  position: fixed;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.notes-content{
+  overflow-y: scroll;
+  /* height: 100vh; */
+}
+
+.note {
+  -moz-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  -webkit-box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+</style>
+
+<div class="line">
+
+  <h4 style="font-size: 20px;" class="mt-4 ms-2">
+    <i class="fas fa-file-alt"></i>&emsp14; Edit Notes
+  </h4>
+  <small class="ms-2 mt-2 text-secondary">{{ notebook.name }}</small>
+  <hr>
+  <ul class="list-group mt-3 notes-content">
+    {% for note in notes %}
+    {% with note.note_content_object as note_content %}
+    <li class="list-group-item note mb-3 {% if note_content == current_object %} border border-primary {% endif %}"
+      id="note-{{note.id}}">
+      <a
+        href="/notes/{{ note.note_type.slug }}/{% if notebook %}{{ notebook.id }}{% else %}{{ notebook_global.id }}{% endif %}/{{ note_content.id }}/update/#note-{{note.id}}">
+  
+        <i class="{{ note.note_type.icon_class }}"></i>
+        &emsp14;
+        {{ note_content.title }}
+        <hr>
+        <small>{{ note.date_created.date }}</small>
+      </a>
+    </li>
+    {% endwith %}
+    {% empty %}
+    <li class="list-group-item">No Created notes yet</li>
+    {% endfor %}
+  </ul>
+
+</div>
+
+{% endblock %}
+
+<!-- ACTUAL NOTES EDITING AREA -->
+{% block editor %}
+<style type="text/css">
+  .notes-content {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 520px;
+  }
+
+  ul.notes-content a {
+    text-decoration: none;
+    color: #787878;
+  }
+
+  .content-editor {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 620px;
+  }
+/* for latter use */
+  #content-editor.fullscreen {
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  label[for='id_text_content'] {
+    display: none;
+  }
+
+  #id_title {
+    font-size: 17px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  #id_title:focus {
+    outline: none !important;
+    outline-width: 0 !important;
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  #id_text_content {
+    height: 250px;
+  }
+</style>
+<h4 style="font-size: 20px;" class="mt-4 ms-2">
+  <i class="fas fa-file-alt"></i>&emsp14;Note
+</h4>
+<small class="ms-2 text-secondary">
+  <strong>Viewed by:</strong> Only you
+</small>
+<hr>
+<div id="content-editor" class="content-editor mt-3">
+  {% include note_form_template %}
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+  document.querySelector('#id_title').className = 'form-control'
+</script>
+
+{% endblock %}

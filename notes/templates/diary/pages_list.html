@@ -1,0 +1,246 @@
+{% extends "notes_base.html" %}
+{% load static %}
+
+{% block title %} Diary {% endblock %}
+
+{% block noteslist %}
+  <style>
+    .col-2 {
+			width: 80%;
+		}
+		.col-3 { display: none; }
+
+     #page {
+      background-image: -webkit-linear-gradient(left, white 10px, transparent 10px), -webkit-linear-gradient(right, white 10px, transparent 10px), -webkit-linear-gradient(white 30px, #ccc 30px, #ccc 31px, white 31px);
+      background-image: -moz-linear-gradient(left, white 10px, transparent 10px), -moz-linear-gradient(right, white 10px, transparent 10px), -moz-linear-gradient(white 30px, #ccc 30px, #ccc 31px, white 31px);
+      background-image: -ms-linear-gradient(left, white 10px, transparent 10px), -ms-linear-gradient(right, white 10px, transparent 10px), -ms-linear-gradient(white 30px, #ccc 30px, #ccc 31px, white 31px);
+      background-image: -o-linear-gradient(left, white 10px, transparent 10px), -o-linear-gradient(right, white 10px, transparent 10px), -o-linear-gradient(white 30px, #ccc 30px, #ccc 31px, white 31px);
+      background-image: linear-gradient(left, white 10px, transparent 10px), linear-gradient(right, white 10px, transparent 10px), linear-gradient(white 30px, #ccc 30px, #ccc 31px, white 31px);
+      background-size: 100% 100%, 100% 100%, 100% 31px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+      line-height: 31px;
+      font-family: Arial, Helvetica, Sans-serif;
+      padding: 8px;
+    }
+
+    #page:focus {
+        outline: none;
+    }
+
+  </style>
+
+  <header>
+    <div style="float: left; width: 40%;">
+      <h3 class="mt-3 ms-3"><i style="font-size: 25px;" class="fas fa-book text-secondary"></i>&emsp14;{{ diary.title }}</h3>
+    </div>
+
+    <div style="float: right; width: 60%; text-align: right;">
+      <p class="mt-3">
+        <div class="dropdown" style="display: inline-block;">
+          <strong>Pages:</strong>&emsp14;
+          <button class="btn border dropdown-toggle" type="button" id="dropdownMenuButton1"         data-bs-toggle="dropdown"
+            aria-expanded="false">
+            {{ current_page.page_no }}
+          </button>
+          <ul class="dropdown-menu" style="min-width:20px;" aria-labelledby="dropdownMenuButton1">
+            {% for page in diary.pages.all %}
+              <li>
+                <a class="dropdown-item" href="{% url 'notes:open_diary_by_page' page.id %}">
+                  {{ page.page_no }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        &emsp14;&emsp14;&emsp14;&emsp14;&emsp14;
+
+        <strong>Page:</strong> <small>{{ current_page.page_no }} / {{ diary.pages.count }}</small>
+        &emsp14;&emsp14;&emsp14;&emsp14;&emsp14;
+
+        <strong>Date:</strong> <small>{{ current_page.date_updated.date }}</small>
+        &emsp14;&emsp14;&emsp14;&emsp14;&emsp14;
+
+        <button 
+         id="del-page-btn"  
+         class="btn btn-sm btn-outline-danger"
+         data-page_id="{{ current_page.id }}">
+          <i style="pointer-events: none;" class="fas fa-trash-alt"></i> Page
+        </button>
+      </p>
+    </div>
+  </header>
+
+  <div>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <textarea 
+        class="form-control" 
+        id="page"
+        data-page_id="{{ current_page.id }}" 
+        cols="30" 
+        rows="30">{{ current_page.text }}</textarea>
+    </form>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  <script>
+    jQuery.fn.trackRows = function () {
+        return this.each(function () {
+          var ininitalHeight, currentRow, iteration = 0;
+          var createMirror = function (textarea) {
+            jQuery(textarea).after('<div class="autogrow-textarea-mirror"></div>');
+            return jQuery(textarea).next('.autogrow-textarea-mirror')[0];
+          }
+
+          var sendContentToMirror = function (textarea) {
+            mirror.innerHTML = String(textarea.value.substring(0, textarea.selectionStart)).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br />') + '.<br/>.';
+            return calculateRowNumber();
+          }
+
+          var growTextarea = function () {
+            sendContentToMirror(this)
+          }
+
+          var calculateRowNumber = function () {
+            if (iteration === 0) {
+              ininitalHeight = $(mirror).height();
+              currentHeight = ininitalHeight;
+              iteration++;
+            }
+            else {
+              currentHeight = $(mirror).height();
+            }
+
+            currentRow = currentHeight / (ininitalHeight / 2) - 1;
+
+            if (currentRow === 30) {
+              createNewPageOnBackendAndUI();
+            }
+
+          }
+
+          // Create a mirror
+          var mirror = createMirror(this);
+          // Style the mirror
+          mirror.style.display = 'none';
+          mirror.style.wordWrap = 'break-word';
+          mirror.style.whiteSpace = 'normal';
+          mirror.style.padding = jQuery(this).css('padding');
+          mirror.style.width = jQuery(this).css('width');
+          mirror.style.fontFamily = jQuery(this).css('font-family');
+          mirror.style.fontSize = jQuery(this).css('font-size');
+          mirror.style.lineHeight = jQuery(this).css('line-height');
+
+          // Style the textarea
+          this.style.overflow = "hidden";
+          this.style.minHeight = this.rows + "em";
+
+          var ininitalHeight = $(mirror).height();
+
+          // Bind the textarea's event
+          this.onkeyup = growTextarea;
+          // Fire the event for text already present
+          sendContentToMirror(this);
+        });
+
+        // sending AJAX request for creating new page
+        function createNewPageOnBackendAndUI() {
+          const url = '/notes/diary/create/page/';
+          const current_page_id = document.querySelector('#page').dataset.page_id;
+          const data = new FormData();
+          const requesting_method = 'POST';
+
+          data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+          data.append('current_page_id', current_page_id);
+
+          var xhttp = new XMLHttpRequest();
+
+          // success response 
+          xhttp.onreadystatechange = function(){
+            if(this.readyState == 4 && this.status == 200) {
+              // redirect to new page 
+              const response = JSON.parse(this.responseText);
+
+              window.location.replace(
+                `http://127.0.0.1:8000/notes/diary/page/${response.page_id}/`
+              )
+            }
+            
+          }
+
+          xhttp.open(requesting_method, url, true);
+          xhttp.send(data);
+        }
+      };
+
+      $(function () {
+        $('textarea').trackRows();
+      });
+
+      // PAGE UPDATION AUTO-SAVE  FEATURE
+      var timeoutId;
+
+      document.querySelector('#page').addEventListener('keyup', (event) => {
+        if (timeoutId) clearTimeout(timeoutId);
+
+        timeoutId = setTimeout(function () {
+          const requesting_method = 'POST'
+          const page_id = event.target.dataset.page_id;
+          const url = `/notes/diary/page/${page_id}/update/`
+          const data = new FormData();
+
+          data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+          data.append('new_text', event.target.value);
+
+          var xhttp = new XMLHttpRequest();
+
+          // success  response 
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              const response = JSON.parse(this.responseText);
+
+              console.log('UPDATED SUCCESSFULLY...');
+            }
+          };
+
+          // sending to backend
+          xhttp.open(requesting_method, url, true);
+          xhttp.send(data);
+        }, 3000);
+      });
+
+      // PAGE DELETION FEATURE
+      document.querySelector('#del-page-btn').addEventListener('click', (event) => {
+        const page_id = event.target.dataset.page_id;
+        const url = `/notes/diary/page/${page_id}/delete`;
+        const requesting_method = 'GET'
+        var redirection_url;
+
+        var xhttp = new XMLHttpRequest()
+
+        xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+          //  success response
+          const response = JSON.parse(this.responseText);
+
+          if(response.page_id) {
+            redirection_url = `http://127.0.0.1:8000/notes/diary/page/${response.page_id}/`
+          } 
+          else {
+            redirection_url = 'http://127.0.0.1:8000/notes/diary/'
+          }
+
+          window.location.replace(redirection_url);
+         } 
+        }
+
+        xhttp.open(requesting_method, url, true);
+        xhttp.send();
+
+      });
+  </script>
+{% endblock %}

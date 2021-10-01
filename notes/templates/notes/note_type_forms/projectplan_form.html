@@ -1,0 +1,101 @@
+<style type="text/css">
+  label {
+    font-size: 20px;
+    font-weight: bold;
+    color: #787878;
+  }
+    input[type="submit"] {
+    position: absolute;
+    top: 32px;
+    right: 30px;
+    background-color: #37afdf;
+    color: white;
+  }
+</style>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <div>
+    {{ form.media }}
+    {% for field in form %}
+    <div class="mb-3">
+      <label for="{{ field.id_for_label }}">{{ field.label }} : </label>
+      {{ field }}
+    </div>
+    {% endfor %}
+  </div>
+  <p>
+    <input type="submit" id="submit" class="btn btn-sm btn-success mt-3" value="Save">
+  </p>
+</form>
+
+
+
+<script type="text/javascript">
+  document.querySelector('#id_summary').className = 'form-control';
+  document.querySelector('#id_major_milestones').className = 'form-control';
+
+  document.addEventListener("DOMContentLoaded", () => {
+      CKEDITOR.on('instanceReady', function (e) {
+        const current_object = "{{ current_object }}"
+        const editor = e.editor;
+        
+        if(current_object == "None") {
+          editor.insertHtml(
+            `
+            <ul style="margin-top:20px;">
+              <li>MileStone 1</li>
+              <li>MileStone 2 </li>
+              <li>MileStone 3</li>
+            </ul>
+            <br><br>
+            `
+          );
+          editor.insertHtml(`
+          <table class="table" style="margin-top:20px; border: 1px solid #ddd; width:650px; height: 270px; text-align:center;">
+            <thead class="table-light">
+              <tr style="font-size: 8px">
+                <th></th>
+                <th>Week1 <br> DD/MM/YY</th>
+                <th>Week2 <br> DD/MM/YY</th>
+                <th>Week3 <br> DD/MM/YY</th>
+                <th>Week4 <br> DD/MM/YY</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Task 1</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Task 2</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Task 3</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><strong>Task 4</strong></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        `);
+        }
+        
+      });
+    });
+</script>

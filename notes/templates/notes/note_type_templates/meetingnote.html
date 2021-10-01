@@ -1,0 +1,17 @@
+
+
+<div style="font-size: 15px;" class="contents">
+  <strong>Date & Time: </strong> <small>{{ current_note.note_content_object.date_time }}</small>
+  <br><br>
+  <h4 style="font-size: 22px;">Goals</h4>
+  {{ current_note.note_content_object.goal }}
+  <br><br>
+  <h4 style="font-size: 22px;">Attendees: </h4>
+  {{ current_note.note_content_object.attendees|safe }}
+  <br>
+  <h4 style="font-size: 22px;">Agenda: </h4>
+  {{ current_note.note_content_object.agenda|safe }}
+  <br>
+  <h4>Notes </h4>
+  {{ current_note.note_content_object.notes|safe }}
+</div>

@@ -1,0 +1,248 @@
+{% extends 'notes_base.html' %}
+{% load static %}
+{% block title %} Dashboard {% endblock %}
+
+{% block noteslist %}
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/css/evo-calendar.min.css"/>
+
+  <div class="card mt-3" id="dashboard-banner">
+    <div class="card-body p-3">
+      <div style="float: left;width: 80%;">
+        <h4 id="greeting-message">{{ greeting_message }}, {{ request.user.username }}!</h4>
+        <p>{{ day }}, {{ today }}</p>
+        <div id="MyClockDisplay" class="clock"></div>
+      </div>
+
+      <div style="float: right;width: 20%;">
+        <img src="http://openweathermap.org/img/w/{{ weather_details.icon }}.png" alt="Image">
+        <p>
+          <span class="title">{{ weather_details.city }}</span>
+          <br>
+          <span class="subtitle">{{ weather_details.temperature }}° F</span>
+          <br> {{ weather_details.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-3">
+    <div class="recent pt-2">
+      <h4 style="color: #14b2f0;" class="mt-2 recent">Recent Notes</h4>
+    </div>
+    <div class="scroll">
+      {% for note in recent_notes %}
+      <div class="note-card">
+        <div class="card-body text-center">
+          <h3 style="font-size: 18px;" class="mt-3 text-secondary">{{note.note_content_object.title|truncatewords:3}}</h3>
+          <i class="{{ note.note_type.icon_class }} text-secondary mt-3" style="font-size: 50px;">
+          </i>
+          <div class="title mt-3">{{ note.note_type.type_name }}</div>
+          <div class="desc mt-4">
+          <small class="me-3">
+            <i class="fas fa-user text-secondary"></i> {{ request.user.username }}
+          </small> 
+          <small>
+            <i class="fas fa-calendar text-secondary"></i> {{ note.date_updated.date }}
+          </small>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  </div>
+
+<div class="sticky-container mt-4">
+  <h3 style="color: #14b2f0;" class="ms-4 mt-3 pt-3">Sticky Notes</h3>
+  <div class="sticky-card mt-3">
+    <form class="scroll ms-4" action="" method="POST">
+      {% csrf_token %}
+      {% for note in sticky_notes %}
+      <div>
+        <button type="button" class="sticky-del-btn" data-slug="{{ note.slug }}">x</button>
+        <textarea class="stickynotes" data-slug="{{ note.slug }}">
+          {{ note.text }}
+        </textarea>
+      </div>
+      {% endfor %}
+      <div id="create">+</div>
+    </form>
+  </div>
+</div>
+
+<div class="calendar-container mt-3 ms-1">
+  <div id="calendar"></div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/evo-calendar@1.1.2/evo-calendar/js/evo-calendar.min.js"></script>
+  
+  <script>
+    $("#calendar").evoCalendar({
+      todayHighlight: true,
+      calendarEvents: [
+        {
+          id: 'bHay68s', // Event's ID (required)
+          name: "Muharram 9", // Event name (required)
+          date: "August/18/2021", // Event date (required)
+          type: "holiday", // Event type (required)
+          everyYear: true // Same event every year (optional)
+        },
+        {
+          id: 'bHxh68s', // Event's ID (required)
+          name: "Muharram 10", // Event name (required)
+          date: "August/19/2021", // Event date (required)
+          type: "holiday", // Event type (required)
+          everyYear: true // Same event every year (optional)
+        },
+        {
+          id: 'asdbc12',
+          name: "Vacation Leave",
+          badge: "02/13 - 02/15", // Event badge (optional)
+          date: ["September/13/2021", "September/15/2021"], // Date range
+          description: "Vacation leave for 3 days.", // Event description (optional)
+          type: "event",
+          color: "#63d867" // Event custom color (optional)
+        }
+      ]
+    });
+    $("#calendar").evoCalendar('addCalendarEvent', [
+      {
+        id: '09nk7Ts',
+        name: "My Birthday",
+        date: "September/21/2021",
+        type: "birthday",
+        everyYear: true
+      }
+    ]);
+  </script>
+
+  <script type="text/javascript">
+    window.addEventListener('load', showTime);
+
+    function showTime(event) {
+      var date = new Date();
+      var hour = date.getHours(); // 0 - 23
+      var minutes = date.getMinutes(); // 0 - 59
+      var seconds = date.getSeconds(); // 0 - 59
+      var session = "AM";
+
+      if (hour == 0) { hour = 12; }
+
+      if (hour > 12) {
+        hour = hour - 12;
+        session = "PM";
+      }
+
+      hour = (hour < 10) ? "0" + hour : hour;
+      minutes = (minutes < 10) ? "0" + minutes : minutes;
+      seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+      var time = hour + ":" + minutes + ":" + seconds + " " + session;
+      document.getElementById("MyClockDisplay").innerText = time;
+      document.getElementById("MyClockDisplay").textContent = time;
+
+      setTimeout(showTime, 1000);
+    }
+  </script>
+
+  <script>
+    var count = 0;
+    $("#create").click(function () {
+
+      // delete button
+      const new_del_btn = document.createElement('button');
+      new_del_btn.className = 'sticky-del-btn'
+      new_del_btn.type = 'button'
+      new_del_btn.setAttribute('data-slug', '')
+      new_del_btn.textContent = 'x'
+      new_del_btn.addEventListener('click', deleteStickyNote);
+
+      // stickynote textarea
+      const new_note = document.createElement('textarea');
+      new_note.className = 'stickynotes';
+      new_note.setAttribute('data-slug', '');
+      new_note.addEventListener('keyup', autoSave);
+
+      // sticky container div
+      const new_div = document.createElement('div')
+      new_div.style.display = 'inline-block'
+
+      new_div.appendChild(new_note)
+      new_div.appendChild(document.createTextNode(''))
+      new_div.appendChild(new_del_btn)
+
+      // append into DOM
+      $(this).before(new_div);
+    });
+
+    var timeoutId;  // timeout variable for autosave timer
+
+    document.querySelectorAll('.stickynotes').forEach(note => {
+      note.addEventListener('keyup', autoSave);
+    })
+
+    function autoSave(event){
+      // after every two seconds save my note to the backend if anything is being written into any note.
+      if (timeoutId) clearTimeout(timeoutId);
+
+      timeoutId = setTimeout(function () {
+        const requesting_method = 'POST'
+        const url = '/notes/sticky/note/'
+        const slug = event.target.dataset.slug;
+        const data = new FormData();
+        data.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        data.append('note_text', event.target.value);
+        data.append('slug', slug);
+
+        var xhttp = new XMLHttpRequest();
+
+        // success  response 
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            const response = JSON.parse(this.responseText);
+            const del_btn = event.target.nextSibling.nextSibling;
+
+            console.log(del_btn);
+            event.target.setAttribute('data-slug', response.slug);
+            del_btn.setAttribute('data-slug', response.slug);
+          }
+        };
+
+        // sending to backend
+        xhttp.open(requesting_method, url, true);
+        xhttp.send(data);
+      }, 2000);
+    }
+
+    document.querySelectorAll('.sticky-del-btn').forEach(button => {
+      button.addEventListener('click', deleteStickyNote);
+    });
+
+    function deleteStickyNote(event) {
+      const slug = event.target.dataset.slug;
+      const url = `/notes/stickynotes/${slug? slug: null}/delete/`
+      const requesting_method = 'GET'
+
+      var xhttp = new XMLHttpRequest();
+
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          event.target.parentElement.remove(); 
+        }
+      }
+
+      // sending the AJAX REQUEST
+      xhttp.open(requesting_method, url, true);
+      xhttp.send();
+    }
+
+  </script>
+{% endblock %}
+
+
+

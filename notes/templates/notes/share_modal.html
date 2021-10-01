@@ -1,0 +1,71 @@
+<!-- Button trigger modal -->
+<style>
+  .form-control {
+    font-size: 13px;
+  }
+</style>
+
+<button style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; background-color: #008F26;" type="button" class="btn text-white btn-sm ms-2"
+  data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  <i class="fas fa-share-alt"></i> Share
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Share Your Notes</h5>
+        <button type="button" class="btn-sm btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+
+        <p class="lead ms-2" style="font-size: 13px;">Anyone with link can view your note in App</p>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" id="share-link"
+            value="http://127.0.0.1:8000/notes/shared/{{ current_note.slug }}/note/">
+          <button class="btn btn-sm btn-primary" id="copy-btn">copy</button>
+        </div>
+        <small style="font-size: 16px;">--- OR ---</small>
+
+        <p class="lead mt-3 ms-2" style="font-size: 13px;">Share your Note via Email</p>
+        <form action="{% url 'notes:send_note_document_mail' current_note.slug %}" method="POST">
+          {% csrf_token %}
+          <h6 class="text-start"><b>From:</b></h6>
+          <input type="email" name="sender_email" class="form-control mb-2" readonly value="{{ request.user.email }}"
+            placeholder="from email">
+          <input type="password" name="sender_password" class="form-control mb-2" placeholder="gmail-password">
+          <hr>
+          <h6 class="text-start"><b>To:</b></h6>
+          <input type="text" name="subject" class="form-control mb-2" placeholder="subject">
+          <input type="email" name="to_email" class="form-control mb-2" placeholder="abc@example">
+          <textarea name="message" class="form-control" cols="30" rows="5" placeholder="Write something..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-primary">Send-mail</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelector('#copy-btn').addEventListener('click', (event) => {
+    const share_link = document.querySelector('#share-link').value;
+
+    navigator.clipboard.writeText(share_link).then(() => {
+      event.target.textContent = 'copied!'
+      event.target.className = 'btn btn-sm btn-success';
+      setTimeout(() => {
+        event.target.textContent = 'copy'
+        event.target.className = 'btn btn-sm btn-primary';
+      }, 3000)
+
+    }, (error) => {
+      console.log('Something went wrong');
+    });
+  });
+</script>
+
+
